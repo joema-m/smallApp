@@ -9,6 +9,7 @@ import re
 from email.mime.text import MIMEText
 from email.header import Header
 from email.utils import formataddr
+import schedule
  
 # 这里使用qq邮箱服务器
 mail_host="smtp.qq.com"  
@@ -20,8 +21,6 @@ mail_pass="**********"   # 注意这里不是你的邮箱登录密码，而是�
 sender = mail_user
 receivers = '*****@***.com'
  
- ipSent = ''
-
 #获取IP地址
 def get_out_ip():
     print("读取IP地址=>=>=>=>=>=>")
@@ -37,9 +36,9 @@ def get_out_ip():
     return ip
  
 #发送邮件代码
-def mail():
+def mail(ipSent):
     ipGet = get_out_ip()
-    if ipSent not ipGet:
+    if ipSent is not ipGet:
         ipSent = ipGet
         try:
             ipmsg="当前IP地址是："+ ipSent
@@ -50,7 +49,7 @@ def mail():
 
             smtpObj = smtplib.SMTP() 
             # server=smtplib.SMTP_SSL("smtp.qq.com", 465)  # SMTP服务器（端口465或587）
-            smtpObj.connect(mail_host, 25)                  # 25端口也可以
+            smtpObj.connect(mail_host, 465)                  # 25端口也可以
             smtpObj.login(mail_user,mail_pass)
             smtpObj.sendmail(sender, receivers, message.as_string())
             print ("successful")
@@ -63,7 +62,7 @@ def mail():
 
  
  
-schedule.every(10).seconds.do(mail) # 每十秒发送一次
+
 # schedule.every(10).minutes.do(job)
 # schedule.every().hour.do(job)
 # schedule.every().day.at("10:30").do(job)
@@ -73,8 +72,12 @@ schedule.every(10).seconds.do(mail) # 每十秒发送一次
  
 
 #主代码发送并循环
-while True:
-    schedule.run_pending()
+if __name__=='__main__':
+    ipSent = ' '
+    mail(ipSent)
+    # schedule.every(10).seconds.do(mail) # 每十秒发送一次
+    # while True:
+    #     schedule.run_pending()
 
 
 
